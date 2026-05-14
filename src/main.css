@@ -1,0 +1,276 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap');
+
+/* ── Reset & Base ─────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background-color: #0f0f11;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% -10%, #1e1a2e 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, #16201a 0%, transparent 50%);
+  color: #e8e2d9;
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem 1rem 4rem;
+}
+
+/* ── Page Title ───────────────────────────────────────────── */
+h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #f5ede0;
+  text-align: center;
+  margin-bottom: 2.5rem;
+  line-height: 1.2;
+}
+
+h1::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 2px;
+  background: linear-gradient(90deg, #c9a96e, transparent);
+  margin: 0.6rem auto 0;
+}
+
+/* ── Game Layout ──────────────────────────────────────────── */
+.game {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 2.5rem;
+  width: 100%;
+  max-width: 680px;
+}
+
+.game-board {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.game-info {
+  flex: 1 1 auto;
+  padding-top: 0.5rem;
+}
+
+/* ── Status Text ──────────────────────────────────────────── */
+.game-board > div:first-child {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #c9a96e;
+  background: rgba(201, 169, 110, 0.08);
+  border: 1px solid rgba(201, 169, 110, 0.2);
+  border-radius: 6px;
+  padding: 0.5rem 1.1rem;
+  text-align: center;
+  min-width: 240px;
+  transition: all 0.3s ease;
+}
+
+/* ── Board Grid ───────────────────────────────────────────── */
+.Board-Row {
+  display: flex;
+  gap: 0;
+}
+
+/* ── Cells ────────────────────────────────────────────────── */
+.NormalSquare,
+.WinnerSquare {
+  width: 90px;
+  height: 90px;
+  font-family: 'Playfair Display', serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.1s ease;
+  position: relative;
+  background: #1a1922;
+  color: #e8e2d9;
+  /* Grid borders using box-shadow inset trick */
+  box-shadow:
+    inset -1px 0 0 #2e2c3a,
+    inset 0 -1px 0 #2e2c3a;
+}
+
+/* Remove right border on last in row */
+.Board-Row .NormalSquare:last-child,
+.Board-Row .WinnerSquare:last-child {
+  box-shadow: inset 0 -1px 0 #2e2c3a;
+}
+
+/* Remove bottom border on last row */
+.Board-Row:last-child .NormalSquare,
+.Board-Row:last-child .WinnerSquare {
+  box-shadow: inset -1px 0 0 #2e2c3a;
+}
+
+.Board-Row:last-child .NormalSquare:last-child,
+.Board-Row:last-child .WinnerSquare:last-child {
+  box-shadow: none;
+}
+
+/* Round outer corners of the grid */
+.Board-Row:first-child .NormalSquare:first-child,
+.Board-Row:first-child .WinnerSquare:first-child { border-radius: 10px 0 0 0; }
+.Board-Row:first-child .NormalSquare:last-child,
+.Board-Row:first-child .WinnerSquare:last-child  { border-radius: 0 10px 0 0; }
+.Board-Row:last-child  .NormalSquare:first-child,
+.Board-Row:last-child  .WinnerSquare:first-child { border-radius: 0 0 0 10px; }
+.Board-Row:last-child  .NormalSquare:last-child,
+.Board-Row:last-child  .WinnerSquare:last-child  { border-radius: 0 0 10px 0; }
+
+.NormalSquare:hover {
+  background: #22202e;
+  transform: scale(0.96);
+}
+
+.NormalSquare:active {
+  transform: scale(0.92);
+}
+
+/* X = warm ivory, O = muted teal */
+.NormalSquare:not(:empty),
+.WinnerSquare:not(:empty) {
+  animation: popIn 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* Winner highlight */
+.WinnerSquare {
+  background: #1e1c10;
+  color: #c9a96e;
+  animation: winGlow 0.4s ease forwards;
+}
+
+@keyframes winGlow {
+  0%   { background: #1a1922; }
+  50%  { background: #2a2410; }
+  100% { background: #1e1c10; }
+}
+
+/* Outer board frame */
+.game-board > div:nth-child(2) {
+  border: 1px solid #2e2c3a;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px #0f0f11,
+    0 16px 48px rgba(0, 0, 0, 0.5),
+    0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Reset Button ─────────────────────────────────────────── */
+.game-board > div:last-child button {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8a8499;
+  background: transparent;
+  border: 1px solid #2e2c3a;
+  border-radius: 6px;
+  padding: 0.5rem 1.4rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.game-board > div:last-child button:hover {
+  color: #e8e2d9;
+  border-color: #4a4760;
+  background: #1a1922;
+}
+
+.game-board > div:last-child button:active {
+  transform: scale(0.97);
+}
+
+/* ── Move History ─────────────────────────────────────────── */
+.game-info ol {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.game-info li {
+  font-size: 0.82rem;
+}
+
+.game-info li span {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  color: #c9a96e;
+  background: rgba(201, 169, 110, 0.06);
+  border: 1px solid rgba(201, 169, 110, 0.15);
+  border-left: 3px solid #c9a96e;
+  border-radius: 4px;
+  padding: 0.38rem 0.8rem;
+}
+
+.game-info li button {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  color: #8a8499;
+  background: transparent;
+  border: 1px solid #26242f;
+  border-radius: 4px;
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.game-info li button:hover {
+  color: #e8e2d9;
+  background: #1a1922;
+  border-color: #3e3b4a;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 520px) {
+  .game {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .NormalSquare,
+  .WinnerSquare {
+    width: 76px;
+    height: 76px;
+    font-size: 2rem;
+  }
+
+  .game-board > div:first-child {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .game-info {
+    width: 100%;
+  }
+}
